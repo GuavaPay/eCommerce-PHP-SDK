@@ -112,7 +112,7 @@ try {
     // Unable to send request to the EPG server
     echo $e->getMessage();
 }
-
+```
 [guavapay]: https://guavapay.com/
 [composer]: https://getcomposer.org/download/
 [packagist]: https://packagist.org/packages/guavapay/epg
