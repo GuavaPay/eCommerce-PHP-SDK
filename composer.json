@@ -1,0 +1,13 @@
+{
+    "name": "guavapay/epg",
+    "description": "test description",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "GuavaPay\\": "src/"
+        }
+    },
+    "require": {
+      "ext-curl": "*"
+    }
+}
