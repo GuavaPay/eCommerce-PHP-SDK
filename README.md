@@ -64,7 +64,7 @@ use GuavaPay\Exception\GuavaClientException;
 
 try {
     $orderInfo = $epg->getOrderStatus('84c5387a-7824-742b-9567-0c1a0e7e1e23', '013');
-    var_dump($order->getOrderId(), $order->getFormUrl());
+    var_dump($orderInfo->getStatus(), $orderInfo->getIsSuccess(), $orderInfo->getAmount());
 } catch (GuavaEcomException $e) {
     // Logical error occured
     echo $e->getMessage();
