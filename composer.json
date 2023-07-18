@@ -1,6 +1,6 @@
 {
     "name": "guavapay/epg",
-    "description": "GuavaPay SDK for PHP - Integrate eCommcerce services to your PHP project easily",
+    "description": "GuavaPay eCommerce SDK for PHP - Integrate eCommerce services to your PHP project easily",
     "homepage": "https://guavapay.com/",
     "type": "library",
     "keywords": ["ecommerce","guavapay","guavapayment","sdk","ecom","epg","EPG","payment","e-commerce"],
