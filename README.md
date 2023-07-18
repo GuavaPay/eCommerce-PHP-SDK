@@ -73,6 +73,45 @@ try {
     echo $e->getMessage();
 }
 ```
+### Get merchant available balance
+In order to check available funds on your merchant account, you need to call ```getBalanceStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
+
+```
+...
+use GuavaPay\Exception\GuavaEcomException;
+use GuavaPay\Exception\GuavaClientException;
+
+try {
+    var_dump($epg->getBalanceStatus(978, '013')->getAmount()); // returns float(133.74)
+} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+    // Logical error occured
+    echo $e->getMessage();
+} catch (\GuavaPay\Exception\GuavaClientException $e) {
+    // Unable to send request to the EPG server
+    echo $e->getMessage();
+}
+```
+
+### Get 3D Secure version
+To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK and pass the ```CardConfig``` object in it.
+
+```
+...
+use GuavaPay\Exception\GuavaEcomException;
+use GuavaPay\Exception\GuavaClientException;
+use GuavaPay\Config\CardConfig;
+
+try {
+    $expiry = DateTime::createFromFormat('m/Y', '06/2026');
+    $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
+    var_dump($epg->check3dsVersion('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig)->getVersion()); // returns int(2)
+} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+    // Logical error occured
+    echo $e->getMessage();
+} catch (\GuavaPay\Exception\GuavaClientException $e) {
+    // Unable to send request to the EPG server
+    echo $e->getMessage();
+}
 
 [guavapay]: https://guavapay.com/
 [composer]: https://getcomposer.org/download/
