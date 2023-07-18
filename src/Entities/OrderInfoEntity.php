@@ -7,12 +7,12 @@ namespace GuavaPay\Entities;
 class OrderInfoEntity
 {
     /**
-     * @param string $orderId
+     * @param string|null $orderId
      * @param string $description
-     * @param float $amount
-     * @param int $currency
+     * @param float|null $amount
+     * @param int|null $currency
      * @param float|null $fee
-     * @param string $timestamp
+     * @param string|null $timestamp
      * @param string $status
      * @param string $statusId
      * @param string|null $provider
@@ -21,7 +21,7 @@ class OrderInfoEntity
      * @param bool $isSuccess
      * @param string|null $auth
      */
-    public function __construct(private string $orderId, private string $description, private float $amount, private int $currency,private float | null $fee, private string $timestamp, private string $status, private string $statusId, private string | null $provider, private string | null $card, private string | null $rrn, private bool $isSuccess, private string | null $auth)
+    public function __construct(private string | null $orderId, private string $description, private float | null $amount, private int | null $currency, private float | null $fee, private string | null $timestamp, private string $status, private string $statusId, private string | null $provider, private string | null $card, private string | null $rrn, private bool $isSuccess, private string | null $auth)
     {
     }
 
@@ -29,7 +29,7 @@ class OrderInfoEntity
     /**
      * @return string
      */
-    public function getOrderId(): string
+    public function getOrderId(): string | null
     {
         return $this->orderId;
     }
@@ -45,7 +45,7 @@ class OrderInfoEntity
     /**
      * @return float
      */
-    public function getAmount(): float
+    public function getAmount(): float | null
     {
         return $this->amount;
     }
@@ -53,7 +53,7 @@ class OrderInfoEntity
     /**
      * @return float
      */
-    public function getCurrency(): float
+    public function getCurrency(): float | null
     {
         return $this->currency;
     }
@@ -69,7 +69,7 @@ class OrderInfoEntity
     /**
      * @return string
      */
-    public function getTimestamp(): string
+    public function getTimestamp(): string | null
     {
         return $this->timestamp;
     }
@@ -101,7 +101,7 @@ class OrderInfoEntity
     /**
      * @return string
      */
-    public function getCard(): string
+    public function getCard(): string | null
     {
         return $this->card;
     }
@@ -129,5 +129,4 @@ class OrderInfoEntity
     {
         return $this->auth;
     }
-
 }

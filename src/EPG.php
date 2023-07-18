@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace GuavaPay;
 
 use GuavaPay\Config\CardConfig;
@@ -66,7 +67,7 @@ class EPG
      * @return NewOrderEntity
      * @throws GuavaClientException
      */
-    public function createOrder(string $orderNumber, int $amount, int $currency, string $returnUrl) : NewOrderEntity
+    public function createOrder(string $orderNumber, int $amount, int $currency, string $returnUrl): NewOrderEntity
     {
         $request = $this->sendRequest('epg/rest/register.do', [
             'orderNumber' => $orderNumber,
@@ -85,7 +86,7 @@ class EPG
      * @return RefundEntity
      * @throws GuavaClientException
      */
-    public function refundOrder(string $orderNumber, int $amount) : RefundEntity
+    public function refundOrder(string $orderNumber, int $amount): RefundEntity
     {
         $request = $this->sendRequest('epg/rest/refund.do', [
             'orderId' => $orderNumber,
@@ -103,7 +104,7 @@ class EPG
      * @return VersionEntity
      * @throws GuavaClientException
      */
-    public function check3dsVersion(string $orderNumber, CardConfig $card, string $ip = null) : VersionEntity
+    public function check3dsVersion(string $orderNumber, CardConfig $card, string $ip = null): VersionEntity
     {
         $ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? null;
         $request =  $this->sendRequest('epg/rest/check3dsversion.do', [
@@ -125,21 +126,20 @@ class EPG
      * @return PaymentEntity
      * @throws GuavaClientException
      */
-    public function paymentRequest(string $orderNumber, CardConfig $card, DeviceConfig $device = null, string $ip = null) : PaymentEntity
-     {
-         $ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? null;
-         $requestData = [
-             'MDORDER' => $orderNumber,
-             '$PAN' => $card->getPan(),
-             '$CVC' => $card->getCvc(),
-             'YYYY' => $card->getExpiryYear(),
-             'MM'   => $card->getExpiryMonth(),
-             'TEXT' => $card->getCardHolder(),
-             'ip' => $ip
-         ];
-         if($device instanceof DeviceConfig)
-         {
-             $requestData = array_merge($requestData, [
+    public function paymentRequest(string $orderNumber, CardConfig $card, DeviceConfig $device = null, string $ip = null): PaymentEntity
+    {
+        $ip = $ip ?? $_SERVER['REMOTE_ADDR'] ?? null;
+        $requestData = [
+            'MDORDER' => $orderNumber,
+            '$PAN' => $card->getPan(),
+            '$CVC' => $card->getCvc(),
+            'YYYY' => $card->getExpiryYear(),
+            'MM'   => $card->getExpiryMonth(),
+            'TEXT' => $card->getCardHolder(),
+            'ip' => $ip
+        ];
+        if ($device instanceof DeviceConfig) {
+            $requestData = array_merge($requestData, [
                 'browserJavaScriptEnabled' => ($device->isBrowserJavaScriptEnabled() === true) ? 'true' : 'false',
                 'browserJavaEnabled' => ($device->isBrowserJavaEnabled() === true) ? 'true' : 'false',
                 'browserScreenColorDepth' => $device->getBrowserScreenColorDepth(),
@@ -147,11 +147,11 @@ class EPG
                 'browserScreenWidth' => $device->getBrowserScreenWidth(),
                 'browserScreenHeight' => $device->getBrowserScreenHeight(),
                 'browserLanguage' => $device->getBrowserLanguage(),
-             ]);
-         }
-         $request = $this->sendRequest('epg/rest/paymentorder.do', $requestData);
-         return new PaymentEntity($request['info'], $request['acsUrl'], $request['cReq']);
-     }
+            ]);
+        }
+        $request = $this->sendRequest('epg/rest/paymentorder.do', $requestData);
+        return new PaymentEntity($request['info'], $request['acsUrl'], $request['cReq']);
+    }
 
     /**
      * Check order status by EPG order ID.
@@ -161,12 +161,12 @@ class EPG
      * @return OrderInfoEntity
      * @throws GuavaClientException
      */
-    public function getOrderStatus(string $orderNumber, string $code) : OrderInfoEntity
+    public function getOrderStatus(string $orderNumber, string $code): OrderInfoEntity
     {
         $request = $this->sendRequest('transaction/' . $code . '/status', [
             'mdorder' => $orderNumber,
         ]);
-        return new OrderInfoEntity($request['OrderId'], $request['Description'], $request['Amount'], $request['Currency'], $request['Fee'] ?? null, $request['Timestamp'], $request['status'], $request['order_status'], $request['provider'] ?? null, $request['Pan'] ?: null, $request['RRN'] ?? null, $request['Success'], $request['Auth'] ?? null);
+        return new OrderInfoEntity($request['OrderId'] ?? null, $request['Description'], $request['Amount'] ?? null, $request['Currency'] ?? null, $request['Fee'] ?? null, $request['Timestamp'] ?? null, $request['status'] ?? $request['order_status'] ?? null, $request['order_status'], $request['provider'] ?? null, $request['Pan'] ?? null, $request['RRN'] ?? null, $request['Success'], $request['Auth'] ?? null);
     }
 
     /**
@@ -176,7 +176,7 @@ class EPG
      * @return BalanceEntity
      * @throws GuavaClientException
      */
-    public function getBalanceStatus(int $currency, string $code) : BalanceEntity
+    public function getBalanceStatus(int $currency, string $code): BalanceEntity
     {
         $request = $this->sendRequest('merchant/' . $code . '/balance', [
             'currency' => $currency,
@@ -226,8 +226,7 @@ class EPG
         }
         $errorCode = isset($result['errorCode']) ? intval($result['errorCode']) : null;
         $errorMessage = $result['errorMessage'] ?? null;
-        if($errorCode !== null && $errorCode !== 0)
-        {
+        if ($errorCode !== null && $errorCode !== 0) {
             throw new GuavaEcomException($errorMessage, $errorCode);
         }
         return $result;
