@@ -6,8 +6,8 @@ The **GuavaPay eCommerce SDK for PHP** makes it easy for developers to integrate
 get started in minutes by installing the SDK through Composer.
 
 Jump To:
-* [Getting Started](#Getting-Started)
-* [Examples](#Examples)
+* [Getting Started](#getting-Started)
+* [Examples](#quick-examples)
 
 ## Getting Started
 
