@@ -1,6 +1,6 @@
 {
     "name": "guavapay/epg",
-    "description": "test description",
+    "description": "GuavaPay SDK for PHP - Integrate eCommcerce services to your PHP project easily",
     "type": "library",
     "autoload": {
         "psr-4": {
