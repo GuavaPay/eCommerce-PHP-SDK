@@ -73,27 +73,9 @@ try {
     echo $e->getMessage();
 }
 ```
-### Get merchant available balance
-In order to check available funds on your merchant account, you need to call ```getBalanceStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
-
-```
-...
-use GuavaPay\Exception\GuavaEcomException;
-use GuavaPay\Exception\GuavaClientException;
-
-try {
-    var_dump($epg->getBalanceStatus(978, '013')->getAmount()); // returns float(133.74)
-} catch (\GuavaPay\Exception\GuavaEcomException $e) {
-    // Logical error occured
-    echo $e->getMessage();
-} catch (\GuavaPay\Exception\GuavaClientException $e) {
-    // Unable to send request to the EPG server
-    echo $e->getMessage();
-}
-```
 
 ### Get 3D Secure version
-To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK and pass the ```CardConfig``` object in it.
+To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK, pass the order ID (which was previously created) and ```CardConfig``` object in it.
 
 ```
 ...
@@ -113,6 +95,51 @@ try {
     echo $e->getMessage();
 }
 ```
+
+### Payment
+To charge the customer's card, at first you need to call ```check3dsVersion()``` method (example shown above) then call ```paymentRequest()``` method from the SDK and pass the ```CardConfig``` and ```DeviceConfig``` objects in it.
+
+```
+...
+use GuavaPay\Exception\GuavaEcomException;
+use GuavaPay\Exception\GuavaClientException;
+use GuavaPay\Config\CardConfig;
+use GuavaPay\Config\DeviceConfig;
+
+try {
+    $expiry = DateTime::createFromFormat('m/Y', '06/2026');
+    $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
+    $deviceConfig = new DeviceConfig(true, 'ru-RU', 986, 1024, 0, false, 16);
+    $payment = $epg->paymentRequest('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig, $deviceConfig);
+
+} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+    // Logical error occured
+    echo $e->getMessage();
+} catch (\GuavaPay\Exception\GuavaClientException $e) {
+    // Unable to send request to the EPG server
+    echo $e->getMessage();
+}
+```
+
+### Get merchant available balance
+In order to check available funds on your merchant account, you need to call ```getBalanceStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
+
+```
+...
+use GuavaPay\Exception\GuavaEcomException;
+use GuavaPay\Exception\GuavaClientException;
+
+try {
+    var_dump($epg->getBalanceStatus(978, '013')->getAmount()); // returns float(133.74)
+} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+    // Logical error occured
+    echo $e->getMessage();
+} catch (\GuavaPay\Exception\GuavaClientException $e) {
+    // Unable to send request to the EPG server
+    echo $e->getMessage();
+}
+```
+
 [guavapay]: https://guavapay.com/
 [composer]: https://getcomposer.org/download/
 [packagist]: https://packagist.org/packages/guavapay/epg
