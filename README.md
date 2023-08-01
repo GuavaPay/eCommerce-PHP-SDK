@@ -23,7 +23,7 @@ Jump To:
 
 ## Quick Examples
 ### Create EPG instance
-```
+```PHP
 <?php
 require_once('./vendor/autoload.php');
 
@@ -37,7 +37,7 @@ After creating an instance of the ```EPG``` object, you can easily call methods.
 ### Create order on EPG
 In order to accept payments, you need to create an order on the Electronic Payment Gateway (EPG). To achieve this, you need to call ```createOrder()``` method from the SDK.
 
-```
+```PHP
 ...
 use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
@@ -57,7 +57,7 @@ try {
 ### Get order status from EPG
 In order to check status of your order on the Electronic Payment Gateway (EPG), you need to call ```getOrderStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
 
-```
+```PHP
 ...
 use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
@@ -77,7 +77,7 @@ try {
 ### Get 3D Secure version
 To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK, pass the order ID (which was previously created) and ```CardConfig``` object in it.
 
-```
+```PHP
 ...
 use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
@@ -87,10 +87,10 @@ try {
     $expiry = DateTime::createFromFormat('m/Y', '06/2026');
     $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
     var_dump($epg->check3dsVersion('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig)->getVersion()); // returns int(2)
-} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+} catch (GuavaEcomException $e) {
     // Logical error occured
     echo $e->getMessage();
-} catch (\GuavaPay\Exception\GuavaClientException $e) {
+} catch (GuavaClientException $e) {
     // Unable to send request to the EPG server
     echo $e->getMessage();
 }
@@ -99,7 +99,7 @@ try {
 ### Payment
 To charge the customer's card, at first you need to call ```check3dsVersion()``` method (example shown above) then call ```paymentRequest()``` method from the SDK and pass the ```CardConfig``` and ```DeviceConfig``` objects in it.
 
-```
+```PHP
 ...
 use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
@@ -112,10 +112,10 @@ try {
     $deviceConfig = new DeviceConfig(true, 'ru-RU', 986, 1024, 0, false, 16);
     $payment = $epg->paymentRequest('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig, $deviceConfig);
 
-} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+} catch (GuavaEcomException $e) {
     // Logical error occured
     echo $e->getMessage();
-} catch (\GuavaPay\Exception\GuavaClientException $e) {
+} catch (GuavaClientException $e) {
     // Unable to send request to the EPG server
     echo $e->getMessage();
 }
@@ -124,17 +124,17 @@ try {
 ### Get merchant available balance
 In order to check available funds on your merchant account, you need to call ```getBalanceStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
 
-```
+```PHP
 ...
 use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
 
 try {
     var_dump($epg->getBalanceStatus(978, '013')->getAmount()); // returns float(133.74)
-} catch (\GuavaPay\Exception\GuavaEcomException $e) {
+} catch (GuavaEcomException $e) {
     // Logical error occured
     echo $e->getMessage();
-} catch (\GuavaPay\Exception\GuavaClientException $e) {
+} catch (GuavaClientException $e) {
     // Unable to send request to the EPG server
     echo $e->getMessage();
 }
