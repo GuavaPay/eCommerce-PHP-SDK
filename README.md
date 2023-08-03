@@ -32,10 +32,10 @@ use GuavaPay\EPG;
 $epg = new EPG('USER', 'SECRET', 'BANK_ID', 'SERVICE_ID');
 ```
 
-After creating an instance of the ```EPG``` object, you can easily call methods. Examples are below.
+After initializing an instance of the ```EPG``` object, you can easily call methods. Examples are below.
 
-### Create order on EPG
-In order to accept payments, you need to create an order on the Electronic Payment Gateway (EPG). To achieve this, you need to call ```createOrder()``` method from the SDK.
+### Register order on EPG
+In order to accept payments, it is essential to register an order on the Electronic Payment Gateway (EPG). This can be accomplished by invoking the ```createOrder()``` method from the SDK.
 
 ```PHP
 ...
@@ -43,19 +43,31 @@ use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
 
 try {
-    $order =  $epg->createOrder(time(), 100, 978, 'http://example.com/paymentResult');
-    var_dump($order->getOrderId(), $order->getFormUrl());
-} catch (GuavaEcomException $e) {
-    // Logical error occured
+    $orderId = '123456'; // The order ID from your database.
+    $amount = 100; // The amount in cents for the payment.
+    $currency = 978; // The currency code in ISO 4217 format (Euro in this case).
+    $returnUrl = 'http://example.com/paymentResult'; // The URL where the customer will be redirected after a successful payment.
+    
+    // Create an order using the Electronic Payment Gateway (EPG).
+    $order = $epg->createOrder($orderId, $amount, $currency, $returnUrl); 
+    
+    // Get the EPG order ID for reference. Example: 84c5387a-7824-742b-9567-0c1a0e7e1e23.
+    var_dump($order->getOrderId()); 
+
+    // Get the URL for the payment, where the customer should be redirected to make the payment.
+    var_dump($order->getFormUrl()); 
+
+} catch (GuavaEcomException $e) { 
+    // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
-} catch (GuavaClientException $e) {
-    // Unable to send request to the EPG server
+} catch (GuavaClientException $e) { 
+    // Unable to send the request to the EPG server, possibly due to connectivity issues.
     echo $e->getMessage();
 }
 ```
 
 ### Get order status from EPG
-In order to check status of your order on the Electronic Payment Gateway (EPG), you need to call ```getOrderStatus()``` method from the SDK using the status code which was provided during the integration process with GuavaPay.
+To verify the status of your order on the Electronic Payment Gateway (EPG), you can utilize the ```getOrderStatus()``` method from the SDK. To access the EPG order status, you will need to provide the status code received during the integration process with GuavaPay.
 
 ```PHP
 ...
@@ -63,19 +75,21 @@ use GuavaPay\Exception\GuavaEcomException;
 use GuavaPay\Exception\GuavaClientException;
 
 try {
-    $orderInfo = $epg->getOrderStatus('84c5387a-7824-742b-9567-0c1a0e7e1e23', '013');
+    $epgOrder = '84c5387a-7824-742b-9567-0c1a0e7e1e23'; // EPG order ID
+    $statusCode = '013'; // status code which was provided by GuavaPay during the integration
+    $orderInfo = $epg->getOrderStatus($epgOrder, $statusCode);
     var_dump($orderInfo->getStatus(), $orderInfo->getIsSuccess(), $orderInfo->getAmount());
-} catch (GuavaEcomException $e) {
-    // Logical error occured
+} catch (GuavaEcomException $e) { 
+    // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
-} catch (GuavaClientException $e) {
-    // Unable to send request to the EPG server
+} catch (GuavaClientException $e) { 
+    // Unable to send the request to the EPG server, possibly due to connectivity issues.
     echo $e->getMessage();
 }
 ```
 
 ### Get 3D Secure version
-To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK, pass the order ID (which was previously created) and ```CardConfig``` object in it.
+To check version of the 3D secure on the customer's card, you need to call ```check3dsVersion()``` method from the SDK, pass the EPG order ID (which was previously created) and ```CardConfig``` object in it.
 
 ```PHP
 ...
@@ -84,14 +98,16 @@ use GuavaPay\Exception\GuavaClientException;
 use GuavaPay\Config\CardConfig;
 
 try {
+    $epgOrder = '84c5387a-7824-742b-9567-0c1a0e7e1e23'; // EPG order ID
     $expiry = DateTime::createFromFormat('m/Y', '06/2026');
     $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
-    var_dump($epg->check3dsVersion('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig)->getVersion()); // returns int(2)
-} catch (GuavaEcomException $e) {
-    // Logical error occured
+
+    var_dump($epg->check3dsVersion($epgOrder, $cardConfig)->getVersion()); // returns int(2)
+} catch (GuavaEcomException $e) { 
+    // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
-} catch (GuavaClientException $e) {
-    // Unable to send request to the EPG server
+} catch (GuavaClientException $e) { 
+    // Unable to send the request to the EPG server, possibly due to connectivity issues.
     echo $e->getMessage();
 }
 ```
