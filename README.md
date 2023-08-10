@@ -99,10 +99,10 @@ use GuavaPay\Config\CardConfig;
 
 try {
     $epgOrder = '84c5387a-7824-742b-9567-0c1a0e7e1e23'; // EPG order ID
-    $expiry = DateTime::createFromFormat('m/Y', '06/2026');
-    $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
+    $expiry = DateTime::createFromFormat('m/Y', '02/2030');
+    $cardConfig = new CardConfig('CardNumber', $expiry, '547', 'CARD HOLDER');
 
-    var_dump($epg->check3dsVersion($epgOrder, $cardConfig)->getVersion()); // returns int(2)
+    var_dump($epg->check3dsVersion($epgOrder, $cardConfig)->getVersion()); // int(2)
 } catch (GuavaEcomException $e) { 
     // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
@@ -123,16 +123,16 @@ use GuavaPay\Config\CardConfig;
 use GuavaPay\Config\DeviceConfig;
 
 try {
-    $expiry = DateTime::createFromFormat('m/Y', '06/2026');
-    $cardConfig = new CardConfig('5373611014639050', $expiry, '652', 'CARD HOLDER');
+    $expiry = DateTime::createFromFormat('m/Y', '02/2030');
+    $cardConfig = new CardConfig('CardNumber', $expiry, '547', 'CARD HOLDER');
     $deviceConfig = new DeviceConfig(true, 'ru-RU', 986, 1024, 0, false, 16);
     $payment = $epg->paymentRequest('84c5387a-7824-742b-9567-0c1a0e7e1e23', $cardConfig, $deviceConfig);
 
-} catch (GuavaEcomException $e) {
-    // Logical error occured
+} catch (GuavaEcomException $e) { 
+    // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
-} catch (GuavaClientException $e) {
-    // Unable to send request to the EPG server
+} catch (GuavaClientException $e) { 
+    // Unable to send the request to the EPG server, possibly due to connectivity issues.
     echo $e->getMessage();
 }
 ```
@@ -147,11 +147,11 @@ use GuavaPay\Exception\GuavaClientException;
 
 try {
     var_dump($epg->getBalanceStatus(978, '013')->getAmount()); // returns float(133.74)
-} catch (GuavaEcomException $e) {
-    // Logical error occured
+} catch (GuavaEcomException $e) { 
+    // An error occurred due to a logical issue during the payment process.
     echo $e->getMessage();
-} catch (GuavaClientException $e) {
-    // Unable to send request to the EPG server
+} catch (GuavaClientException $e) { 
+    // Unable to send the request to the EPG server, possibly due to connectivity issues.
     echo $e->getMessage();
 }
 ```
