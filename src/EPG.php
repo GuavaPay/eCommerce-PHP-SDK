@@ -14,6 +14,8 @@ use GuavaPay\Entities\RefundEntity;
 use GuavaPay\Entities\VersionEntity;
 use GuavaPay\Exception\GuavaClientException;
 use GuavaPay\Exception\GuavaEcomException;
+use GuavaPay\Exception\GuavaSignatureException;
+use OpenSSLAsymmetricKey;
 
 class EPG
 {
@@ -182,6 +184,37 @@ class EPG
             'currency' => $currency,
         ]);
         return new BalanceEntity(floatval($request['available_amount']));
+    }
+
+    /**
+     * Verify signature on the callback request
+     * @param array $request
+     * @param string $signature
+     * @param OpenSSLAsymmetricKey $publicKey
+     * @return true if signature is valid
+     * @throws GuavaSignatureException if signature is not valid
+     */
+    public function checkSignature(array $request, string $signature, OpenSSLAsymmetricKey $publicKey) : bool
+    {
+        $params = [];
+        foreach ($request as $key => $value) {
+            if ($key === 'signature') {
+                continue;
+            }
+            $params[] = $key . '=' . (is_bool($value) ? ($value ? 'true' : 'false') : $value);
+        }
+        sort($params);
+        $toSignature = implode('&', $params);
+        $hash = hash('sha256', $toSignature, true);
+        $sha256Str = bin2hex($hash);
+        $verification = openssl_verify($sha256Str, base64_decode($request['signature']), $publicKey, OPENSSL_ALGO_SHA256);
+        if ($verification === 1) {
+            return true;
+        } elseif ($verification === 0) {
+            throw new GuavaSignatureException('Invalid signature!');
+        } else {
+            throw new GuavaSignatureException('SSL verification error: ' . openssl_error_string());
+        }
     }
 
     private function sendRequest(string $endpoint, array $data)

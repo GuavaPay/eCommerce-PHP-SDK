@@ -155,6 +155,32 @@ try {
     echo $e->getMessage();
 }
 ```
+### Check callback signature
+To check the signature of the callback request, you need to call ```checkSignature()``` method from the SDK.
+```PHP
+...
+use GuavaPay\Exception\GuavaSignatureException;
+
+try {
+    $request = json_decode(file_get_contents('php://input'), true); // get JSON as PHP array from POST request
+    if ($request === null && json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Invalid JSON request');
+    }
+    $certPath = "file://./certificate.pem"; // path to your certificate file (.pem) from GuavaPay
+    $publicKey = openssl_pkey_get_public($certPath);
+    if ($publicKey === false) {
+        throw new Exception('Invalid public key'); // if you have an error here, check your certificate file
+    }
+    $result = $epg->checkSignature($request, $request['signature'], $publicKey);
+    echo 'Valid signature!'; // if you see this message, then the signature is valid
+
+    // now you can top up the user's balance, update the order status, etc.
+} catch (GuavaSignatureException $e) {
+    echo 'Invalid signature!' . $e->getMessage(); // if you see this message, then the signature is invalid
+} catch (\Exception $e) {
+    echo $e->getMessage() . PHP_EOL; // if you see this message, then an error occurred
+}
+```
 
 [guavapay]: https://guavapay.com/
 [composer]: https://getcomposer.org/download/
